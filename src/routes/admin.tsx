@@ -13,6 +13,11 @@ import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { LogOut, Trash2 } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
+  ssr: false,
+  beforeLoad: async () => {
+    const { data, error } = await supabase.auth.getUser();
+    if (error || !data.user) throw redirect({ to: "/auth" });
+  },
   component: AdminPage,
 });
 
