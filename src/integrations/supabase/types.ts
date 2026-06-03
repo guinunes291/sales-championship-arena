@@ -14,16 +14,247 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      confrontos: {
+        Row: {
+          corretor_a_id: string | null
+          corretor_b_id: string | null
+          created_at: string
+          fase_id: string
+          id: string
+          posicao: number | null
+          semana_ref: number | null
+          vencedor_id: string | null
+        }
+        Insert: {
+          corretor_a_id?: string | null
+          corretor_b_id?: string | null
+          created_at?: string
+          fase_id: string
+          id?: string
+          posicao?: number | null
+          semana_ref?: number | null
+          vencedor_id?: string | null
+        }
+        Update: {
+          corretor_a_id?: string | null
+          corretor_b_id?: string | null
+          created_at?: string
+          fase_id?: string
+          id?: string
+          posicao?: number | null
+          semana_ref?: number | null
+          vencedor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "confrontos_corretor_a_id_fkey"
+            columns: ["corretor_a_id"]
+            isOneToOne: false
+            referencedRelation: "corretores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "confrontos_corretor_b_id_fkey"
+            columns: ["corretor_b_id"]
+            isOneToOne: false
+            referencedRelation: "corretores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "confrontos_fase_id_fkey"
+            columns: ["fase_id"]
+            isOneToOne: false
+            referencedRelation: "fases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "confrontos_vencedor_id_fkey"
+            columns: ["vencedor_id"]
+            isOneToOne: false
+            referencedRelation: "corretores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      corretores: {
+        Row: {
+          ativo: boolean
+          created_at: string
+          foto_url: string | null
+          id: string
+          nome: string
+          selecao_id: string | null
+        }
+        Insert: {
+          ativo?: boolean
+          created_at?: string
+          foto_url?: string | null
+          id?: string
+          nome: string
+          selecao_id?: string | null
+        }
+        Update: {
+          ativo?: boolean
+          created_at?: string
+          foto_url?: string | null
+          id?: string
+          nome?: string
+          selecao_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "corretores_selecao_id_fkey"
+            columns: ["selecao_id"]
+            isOneToOne: false
+            referencedRelation: "selecoes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fases: {
+        Row: {
+          created_at: string
+          id: string
+          nome: string
+          ordem: number
+          semana_fim: string | null
+          semana_inicio: string | null
+          tipo: Database["public"]["Enums"]["fase_tipo"]
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          nome: string
+          ordem: number
+          semana_fim?: string | null
+          semana_inicio?: string | null
+          tipo: Database["public"]["Enums"]["fase_tipo"]
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          nome?: string
+          ordem?: number
+          semana_fim?: string | null
+          semana_inicio?: string | null
+          tipo?: Database["public"]["Enums"]["fase_tipo"]
+        }
+        Relationships: []
+      }
+      pontuacoes: {
+        Row: {
+          agendamentos: number
+          corretor_id: string
+          created_at: string
+          documentacao: number
+          id: string
+          semana: number
+          total: number | null
+          updated_at: string
+          vendas: number
+          visitas: number
+        }
+        Insert: {
+          agendamentos?: number
+          corretor_id: string
+          created_at?: string
+          documentacao?: number
+          id?: string
+          semana: number
+          total?: number | null
+          updated_at?: string
+          vendas?: number
+          visitas?: number
+        }
+        Update: {
+          agendamentos?: number
+          corretor_id?: string
+          created_at?: string
+          documentacao?: number
+          id?: string
+          semana?: number
+          total?: number | null
+          updated_at?: string
+          vendas?: number
+          visitas?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pontuacoes_corretor_id_fkey"
+            columns: ["corretor_id"]
+            isOneToOne: false
+            referencedRelation: "corretores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      selecoes: {
+        Row: {
+          bandeira: string | null
+          cor_primaria: string | null
+          created_at: string
+          id: string
+          nome: string
+        }
+        Insert: {
+          bandeira?: string | null
+          cor_primaria?: string | null
+          created_at?: string
+          id?: string
+          nome: string
+        }
+        Update: {
+          bandeira?: string | null
+          cor_primaria?: string | null
+          created_at?: string
+          id?: string
+          nome?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin"
+      fase_tipo:
+        | "grupos"
+        | "quartas"
+        | "repescagem"
+        | "semifinal"
+        | "final"
+        | "terceiro"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +381,16 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin"],
+      fase_tipo: [
+        "grupos",
+        "quartas",
+        "repescagem",
+        "semifinal",
+        "final",
+        "terceiro",
+      ],
+    },
   },
 } as const
