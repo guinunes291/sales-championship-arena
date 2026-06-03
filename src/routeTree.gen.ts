@@ -13,7 +13,11 @@ import { Route as RegulamentoRouteImport } from './routes/regulamento'
 import { Route as RankingRouteImport } from './routes/ranking'
 import { Route as PremiosRouteImport } from './routes/premios'
 import { Route as CorretoresRouteImport } from './routes/corretores'
+import { Route as ChaveamentoRouteImport } from './routes/chaveamento'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 
 const RegulamentoRoute = RegulamentoRouteImport.update({
   id: '/regulamento',
@@ -35,50 +39,102 @@ const CorretoresRoute = CorretoresRouteImport.update({
   path: '/corretores',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ChaveamentoRoute = ChaveamentoRouteImport.update({
+  id: '/chaveamento',
+  path: '/chaveamento',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/chaveamento': typeof ChaveamentoRoute
   '/corretores': typeof CorretoresRoute
   '/premios': typeof PremiosRoute
   '/ranking': typeof RankingRoute
   '/regulamento': typeof RegulamentoRoute
+  '/admin': typeof AuthenticatedAdminRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/chaveamento': typeof ChaveamentoRoute
   '/corretores': typeof CorretoresRoute
   '/premios': typeof PremiosRoute
   '/ranking': typeof RankingRoute
   '/regulamento': typeof RegulamentoRoute
+  '/admin': typeof AuthenticatedAdminRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/chaveamento': typeof ChaveamentoRoute
   '/corretores': typeof CorretoresRoute
   '/premios': typeof PremiosRoute
   '/ranking': typeof RankingRoute
   '/regulamento': typeof RegulamentoRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/corretores' | '/premios' | '/ranking' | '/regulamento'
-  fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/corretores' | '/premios' | '/ranking' | '/regulamento'
-  id:
-    | '__root__'
+  fullPaths:
     | '/'
+    | '/auth'
+    | '/chaveamento'
     | '/corretores'
     | '/premios'
     | '/ranking'
     | '/regulamento'
+    | '/admin'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | '/'
+    | '/auth'
+    | '/chaveamento'
+    | '/corretores'
+    | '/premios'
+    | '/ranking'
+    | '/regulamento'
+    | '/admin'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/chaveamento'
+    | '/corretores'
+    | '/premios'
+    | '/ranking'
+    | '/regulamento'
+    | '/_authenticated/admin'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
+  ChaveamentoRoute: typeof ChaveamentoRoute
   CorretoresRoute: typeof CorretoresRoute
   PremiosRoute: typeof PremiosRoute
   RankingRoute: typeof RankingRoute
@@ -115,6 +171,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CorretoresRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/chaveamento': {
+      id: '/chaveamento'
+      path: '/chaveamento'
+      fullPath: '/chaveamento'
+      preLoaderRoute: typeof ChaveamentoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -122,11 +199,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
+  ChaveamentoRoute: ChaveamentoRoute,
   CorretoresRoute: CorretoresRoute,
   PremiosRoute: PremiosRoute,
   RankingRoute: RankingRoute,
@@ -135,3 +233,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
